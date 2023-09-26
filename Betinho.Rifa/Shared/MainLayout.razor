@@ -1,12 +1,21 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
-<div class="page">
-    <RadzenLayout>
-        <RadzenHeader>
-
-        </RadzenHeader>
-        <RadzenBody>
-            @Body
-        </RadzenBody>
-    </RadzenLayout>
-</div>
+<RadzenLayout class="rz-p-2 container-md container-fluid" Style="width: 100%">
+    <RadzenHeader Style="border-radius: .675rem; width: 100%; float: none" class="rz-pl-4 rz-pr-4 rz-display-flex rz-align-center">
+        <RadzenRow Style="width: 100%">
+            <RadzenColumn class="rz-display-flex rz-align-items-center">
+                <RadzenImage Path="bot.png" Style="width: 40px; height: 40px; padding: 4px"></RadzenImage>
+                <RadzenText Text="Fala Betinho - Sorteios!" Style="width: 155px; margin-bottom: 0px" />
+            </RadzenColumn>
+            <RadzenColumn class="rz-display-flex">
+                <NavMenu></NavMenu>
+            </RadzenColumn>
+            <RadzenColumn class="rz-display-flex rz-justify-content-end rz-align-items-center">
+                <LoginDisplay></LoginDisplay>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenHeader>
+    <RadzenBody class="rz-p-0 rz-pt-4">
+        @Body
+    </RadzenBody>
+</RadzenLayout>

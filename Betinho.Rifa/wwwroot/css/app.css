@@ -18,10 +18,6 @@ a, .btn-link {
     border-color: #1861ac;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
 .content {
     padding-top: 1.1rem;
 }
@@ -67,35 +63,83 @@ a, .btn-link {
         content: "An error has occurred."
     }
 
-.loading-progress {
-    position: relative;
-    display: block;
-    width: 8rem;
-    height: 8rem;
-    margin: 20vh auto 1rem auto;
+:root {
+    --rz-menu-border-radius: .675rem;
+    --rz-menu-top-item-border-radius: .675rem;
+    --rz-white: #ffffff;
+    --rz-black: #000000;
+    --rz-base-50: #ffffff;
+    --rz-base-100: #f4f5f9;
+    --rz-base-200: #e9eaed;
+    --rz-base-300: #e0e1e4;
+    --rz-base-400: #c9cacd;
+    --rz-base-500: #afafb2;
+    --rz-base-600: #8d8e90;
+    --rz-base-700: #707072;
+    --rz-base-800: #4f4f50;
+    --rz-base-900: #262526;
+    --rz-primary: #1151f3;
+    --rz-primary-light: #376df5;
+    --rz-primary-lighter: rgba(17, 81, 243, 0.16);
+    --rz-primary-dark: #0e44cc;
+    --rz-primary-darker: #0d3eb9;
+    --rz-secondary: #5d89f7;
+    --rz-secondary-light: #779cf8;
+    --rz-secondary-lighter: rgba(93, 137, 247, 0.16);
+    --rz-secondary-dark: #4e73cf;
+    --rz-secondary-darker: #4768bc;
+    --rz-info: #12a4f5;
+    --rz-info-light: #38b3f7;
+    --rz-info-lighter: rgba(18, 164, 245, 0.16);
+    --rz-info-dark: #0f8ace;
+    --rz-info-darker: #0e7dba;
+    --rz-success: #009b51;
+    --rz-success-light: #29ab6d;
+    --rz-success-lighter: rgba(0, 155, 81, 0.16);
+    --rz-success-dark: #008244;
+    --rz-success-darker: #00763e;
+    --rz-warning: #ffae11;
+    --rz-warning-light: #ffbb37;
+    --rz-warning-lighter: rgba(255, 174, 17, 0.16);
+    --rz-warning-dark: #d6920e;
+    --rz-warning-darker: #c2840d;
+    --rz-danger: #f31155;
+    --rz-danger-light: #f53770;
+    --rz-danger-lighter: rgba(243, 17, 85, 0.16);
+    --rz-danger-dark: #cc0e47;
+    --rz-danger-darker: #b90d41;
+    --rz-on-primary: #ffffff;
+    --rz-on-primary-light: #ffffff;
+    --rz-on-primary-lighter: #1151f3;
+    --rz-on-primary-dark: #ffffff;
+    --rz-on-primary-darker: #ffffff;
+    --rz-on-secondary: #ffffff;
+    --rz-on-secondary-light: #ffffff;
+    --rz-on-secondary-lighter: #5d89f7;
+    --rz-on-secondary-dark: #ffffff;
+    --rz-on-secondary-darker: #ffffff;
+    --rz-on-info: #ffffff;
+    --rz-on-info-light: #ffffff;
+    --rz-on-info-lighter: #12a4f5;
+    --rz-on-info-dark: #ffffff;
+    --rz-on-info-darker: #ffffff;
+    --rz-on-success: #ffffff;
+    --rz-on-success-light: #ffffff;
+    --rz-on-success-lighter: #009b51;
+    --rz-on-success-dark: #ffffff;
+    --rz-on-success-darker: #ffffff;
+    --rz-on-warning: #ffffff;
+    --rz-on-warning-light: #ffffff;
+    --rz-on-warning-lighter: #ffae11;
+    --rz-on-warning-dark: #ffffff;
+    --rz-on-warning-darker: #ffffff;
+    --rz-on-danger: #ffffff;
+    --rz-on-danger-light: #ffffff;
+    --rz-on-danger-lighter: #f31155;
+    --rz-on-danger-dark: #ffffff;
+    --rz-on-danger-darker: #ffffff;
 }
 
-    .loading-progress circle {
-        fill: none;
-        stroke: #e0e0e0;
-        stroke-width: 0.6rem;
-        transform-origin: 50% 50%;
-        transform: rotate(-90deg);
-    }
-
-        .loading-progress circle:last-child {
-            stroke: #1b6ec2;
-            stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
-            transition: stroke-dasharray 0.05s ease-in-out;
-        }
-
-.loading-progress-text {
-    position: absolute;
-    text-align: center;
-    font-weight: bold;
-    inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
+.rz-navigation-item-wrapper{
+    border-radius: .675rem !important;
 }
-
-    .loading-progress-text:after {
-        content: var(--blazor-load-percentage-text, "Loading");
-    }
