@@ -1,9 +1,351 @@
-﻿@page "/"
+@page "/"
+@using Betinho.Rifa.Entities;
+@using System.Text.RegularExpressions;
+@using System.Security.Claims;
 
-<PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+@inject HttpClient _httpClient
+@inject IJSRuntime JS
+@inject AuthenticationStateProvider StateProvider
 
-Welcome to your new app.
+<RadzenStack>
+    @if (FeaturedAction is not null)
+    {
+        <RadzenPanel>
+            <RadzenRow class="rz-flex-column" RowGap="4">
+                <RadzenProgressBar @bind-Value="progress"></RadzenProgressBar>
+                <RadzenText Text="Ação Atual" TextStyle="Radzen.Blazor.TextStyle.Caption" />
+                <RadzenText Text="@FeaturedAction.Name" TextStyle="Radzen.Blazor.TextStyle.DisplayH5" />
+            </RadzenRow>
+            <RadzenRow class="rz-flex-column" RowGap="2">
+                <RadzenText Text="Descrição" TextStyle="Radzen.Blazor.TextStyle.Caption" />
+                <RadzenText Text="@FeaturedAction.Description" />
+                <RadzenText Text="Items" TextStyle="Radzen.Blazor.TextStyle.Caption" />
+                <RadzenDataList TItem="ItemEntity" Data="@FeaturedAction.Items">
+                    <Template Context="item">
+                        <a href="@item.Link" target="_blank">
+                            <RadzenRow class="rz-align-items-center">
+                                <RadzenImage Path="@item.Image" Style="width: 32px; height: 32px; border-radius: .375rem" />
+                                <RadzenColumn>
+                                    <RadzenText Text="@item.Name" TextStyle="Radzen.Blazor.TextStyle.Caption" />
+                                    <RadzenText Text="@item.Description" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </a>
+                    </Template>
+                </RadzenDataList>
+            </RadzenRow>
+        </RadzenPanel>
+        <RadzenPanel>
+            <HeaderTemplate>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+            </HeaderTemplate>
+            <ChildContent>
+                <RadzenRow class="rz-flex-column" RowGap="1" Style="margin-top: 8px">
+                    <p>Para comprar quotas do sorteio basta você escolher a quantidade e clicar em <strong>CONFIRMAR</strong> mas para isso é preciso estar logado ou você também pode adquirir pelo Chat.</p>
+                    <p>Na aba <strong>NÚMEROS/COMPROVANTES</strong> você pode conferir os seus números e <strong>ENVIAR COMPROVANTE</strong></p>
+                    <p>Obs.: Os números só são confirmados e/ou liberados após o pagamento ser processado.</p>
+                    <p>O resultado será disponibilizado aqui nesta página e também no Instagram você pode acessar o instagram no botão abaixo (usuários logados) a meta é atingir 80% do número de cotas para a liberação da data do sorteio.</p>
+                    <p>Em caso de dúvida entre em contato conosco pelo whatsapp (usuários logados) ou chat!</p>
+                    <p>Obs.:O sorteio irá acontecer entre os números que forem gerados. </p>
+                </RadzenRow>
+            </ChildContent>
+        </RadzenPanel>
+        <AuthorizeView>
+            <Authorized>
+                <RadzenPanel>
+                    <HeaderTemplate>
+                    </HeaderTemplate>
+                    <ChildContent>
+                        <RadzenRow class="rz-flex-column" RowGap="1" Style="margin-top: 8px">
+                            <p>Abaixo você pode capturar as informações para pagamento que serão enviadas na aba <strong>NÚMEROS/COMPROVANTES</strong>.</p>
+                        </RadzenRow>
+                    </ChildContent>
+                    <FooterTemplate>
+                        <RadzenRow>
+                            <RadzenColumn>
+                                <RadzenButton Click=@(() => JS.InvokeVoidAsync("window.open","https://wa.me/5531983140945?text=Sorteio%20Fala%20Betinho","_blank")) Style="background-color: #00A400; float: right; width: 120px; margin: 8px" Text="Whatsapp"></RadzenButton>
+                                <RadzenButton Click=@(() => JS.InvokeVoidAsync("window.open","https://instagram.com/falabetinho","_blank")) Style="float: right; width: 120px; margin: 8px; background-color: rgb(225, 48, 108)" Text="Instagram"></RadzenButton>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow Style="margin-top: 8px">
+                            <RadzenColumn class="text-break rz-col-12" Style="padding: 8px; background-color: #e0e0e0; border-radius: .375rem">
+                                <input type="text" id="pix-code" value="@pixCode" hidden />
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </FooterTemplate>
+                </RadzenPanel>
+                <RadzenPanel>
+                    <RadzenTabs @bind-SelectedIndex="tabIndex">
+                        <Tabs>
+                            <RadzenTabsItem Text="COMPRAR">
+                                <RadzenRow>
+                                    <RadzenColumn class="rz-col-md-6 rz-col-md-7">
+                                        <RadzenRow>
+                                            <RadzenColumn class="rz-col-12 rz-col-md-6">
+                                                <RadzenText Text="Nome*" TextStyle="Radzen.Blazor.TextStyle.Caption" />
+                                                <RadzenTextBox class="form-control" @bind-Value="@Quota.Name" required="true"></RadzenTextBox>
+                                            </RadzenColumn>
+                                            <RadzenColumn>
+                                                <RadzenText Text="E-mail Principal" TextStyle="Radzen.Blazor.TextStyle.Caption" />
+                                                <RadzenTextBox class="form-control" @bind-Value="@Quota.Email" Disabled="true"></RadzenTextBox>
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                        <RadzenRow>
+                                            <RadzenColumn>
+                                                <RadzenText Text="É para outra pessoa? Preencha o e-mail abaixo:" TextStyle="Radzen.Blazor.TextStyle.Caption" />
+                                                <RadzenTextBox class="form-control" @bind-Value="@Quota.ThirdEmail" Disabled="false"></RadzenTextBox>
+                                            </RadzenColumn>
+                                            <RadzenColumn class="rz-col-12 rz-col-md-6">
+                                                <RadzenText Text="Telefone/Whatsapp*" TextStyle="Radzen.Blazor.TextStyle.Caption" />
+                                                <RadzenTextBox class="form-control" @bind-Value="Quota.Phone"></RadzenTextBox>
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                    </RadzenColumn>
+                                    <RadzenColumn class="rz-col-md-4 rz-col-md-5">
+                                        <RadzenRow RowGap="0" Style="margin: 0px 0px 8px 0px" Gap="">
+                                            <RadzenRow>
+                                                <RadzenColumn>
+                                                    <RadzenText Text="Cotas" Style="margin-bottom: 0px" TextStyle="Radzen.Blazor.TextStyle.Caption" />
+                                                </RadzenColumn>
+                                            </RadzenRow>
+                                            <RadzenRow>
+                                                <RadzenColumn Style="float: none; margin-top: 0px">
+                                                    <RadzenButton Icon="remove" Click="(() => RemoveQuota())" Disabled="Quota.TotalQuotasAquired == 1" Style="text-align: center"></RadzenButton>
+                                                    <RadzenButton Icon="add" Click="(() => AddQuota())" Disabled="Quota.TotalQuotasAquired == 10"></RadzenButton>
+                                                    <span style="float: right; line-height: 36px;">R$ @price</span>
+                                                </RadzenColumn>
+                                                <RadzenColumn class="rz-col-md-3">
+                                                    <RadzenNumeric TValue="int" Min="1" Max="@FeaturedAction.MaxQuotaAllowed" Name="Total Cotas"
+                                                                   Placeholder="Cotas" class="form-control" @bind-Value="@Quota.TotalQuotasAquired"
+                                                                   Change="(() => price = Quota.TotalQuotasAquired * FeaturedAction.QuotaValue)"></RadzenNumeric>
+                                                </RadzenColumn>
+                                                <RadzenColumn class="rz-col-12 rz-col-md-4">
+                                                    <RadzenButton Text="Confirmar" class="form-control" Visible="true"
+                                                                  Click="SaveQuota"
+                                                                  Disabled="(string.IsNullOrEmpty(Quota.Email) || string.IsNullOrEmpty(Quota.Name) || string.IsNullOrEmpty(Quota.Phone))"></RadzenButton>
+                                                </RadzenColumn>
+                                            </RadzenRow>
+                                        </RadzenRow>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                            </RadzenTabsItem>
+                            <RadzenTabsItem Text="NÚMEROS/COMPROVANTES">
+                                <RadzenDataList TItem="Quota" Data="Quotas">
+                                    <Template Context="quota">
+                                        <RadzenRow>
+                                            <RadzenColumn class="rz-display-flex rz-flex-column rz-col-12 rz-col-md-4">
+                                                <RadzenText TextStyle="TextStyle.Caption">
+                                                    Cota adqurida em: @quota.BilledAt
+                                                </RadzenText>
+                                                <RadzenText TextStyle="TextStyle.Caption">
+                                                    Quantidade: @quota.TotalQuotasAquired
+                                                </RadzenText>
+                                                <RadzenText TextStyle="TextStyle.Caption">
+                                                    Valor total: @quota.TotalBilled
+                                                </RadzenText>
+                                                <RadzenText TextStyle="TextStyle.Caption">
+                                                    Adquirido para: @quota.ThirdEmail
+                                                </RadzenText>
+                                                <RadzenText TextStyle="TextStyle.Caption">
+                                                    @if (@quota.AtachedAt is not null){
+                                                        <span class="rz-color-primary">Comprovante anexado em:</span>
+                                                        @quota.AtachedAt
+                                                    }else{
+                                                        <span class="rz-color-danger">Comprovante não enviado.</span>
+                                                    }
+                                                </RadzenText>
+                                                <RadzenText TextStyle="TextStyle.Caption">
+                                                    @if (@quota.AtachLink is not null)
+                                                    {
+                                                        <span>Link para comprovante:</span>
+                                                        @quota.AtachLink
+                                                    }
+                                                </RadzenText>
+                                            </RadzenColumn>
+                                            <RadzenColumn class="rz-display-flex rz-flex-column rz-col-12 rz-col-md-4">
+                                                <RadzenText>Seus números:</RadzenText>
+                                                @if(quota.QuotasAquired is null || quota.QuotasAquired.Count == 0)
+                                                {
+                                                    <span>Números não lançados</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@string.Join(" - ",quota.QuotasAquired)</span>;
+                                                }
+                                            </RadzenColumn>
+                                            <RadzenColumn class="rz-display-flex rz-flex-column rz-justify-content-center rz-col-12 rz-col-md-2">
+                                                <RadzenButton Icon="content_copy" Text="Copiar PIX" Click="@(() => CopyToClipboard("pix-code"))" Disabled="!(quota.AtachedAt is null)"></RadzenButton>
+                                            </RadzenColumn>
+                                            <RadzenColumn class="rz-display-flex rz-flex-column rz-justify-content-center rz-col-12 rz-col-md-2">
+                                                <RadzenButton Text="Enviar Comprovante" Click="@(() => OpenForm(quota))" Disabled="!(quota.AtachedAt is null)"></RadzenButton>
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                        @if(isRoleAdmin){
+                                            <RadzenRow>
+                                                <RadzenButton Text="Gerar Números" class="form-control"
+                                                              Click="(() => GenerateNumbers(quota))"></RadzenButton>
+                                            </RadzenRow>
+                                        }
+                                    </Template>
+                                </RadzenDataList>
+                            </RadzenTabsItem>
+                        </Tabs>
+                    </RadzenTabs>
+
+                </RadzenPanel>
+            </Authorized>
+            <NotAuthorized>
+                <RadzenRow class="rz-align-items-center rz-justify-content-center" Style="color: #0332ff">
+                    <RadzenIcon Icon="attach_money"></RadzenIcon>
+                    Entre para realizar a compra!
+                </RadzenRow>
+            </NotAuthorized>
+        </AuthorizeView>
+    }
+    @if (Actions.Count < 1)
+    {
+        <RadzenPanel>
+            <RadzenRow class="rz-align-items-center rz-justify-content-center" Style="color: #0332ff">
+                <RadzenIcon Icon="sentiment_very_dissatisfied"></RadzenIcon>
+                Não há sorteios disponíveis.
+            </RadzenRow>
+        </RadzenPanel>
+    }
+
+</RadzenStack>
+
+@code {
+    List<ActionEntity> Actions { get; set; } = new List<ActionEntity>();
+
+    ActionEntity? FeaturedAction { get; set; }
+
+    Quota Quota { get; set; }
+
+    List<Quota> Quotas { get; set; } = new List<Quota>();
+
+    decimal price;
+
+    int tabIndex = 0;
+
+    double progress;
+
+    string pixCode = "00020126580014br.gov.bcb.pix013636a82332-5d65-4fac-bc22-5bcab134f29427600016BR.COM.PAGSEGURO013602E3D370-65F4-41A3-9992-6B5F311E9A1E5204000053039865802BR5921HEBERT ALVES DA SILVA6015RIBEIRAO DAS NE62290525PAGS00000000023092523032663042213";
+
+    bool isRoleAdmin = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        try
+        {
+            Actions = await _httpClient.GetFromJsonAsync<List<ActionEntity>>("api/get/actions/0/3") ?? Actions;
+            FeaturedAction = Actions.First(a => a.Featured == true);
+            progress = await _httpClient.GetFromJsonAsync<double>($"api/get/progress/{FeaturedAction.Id}");
+            Quota = new Quota
+                {
+                    TotalQuotasAquired = 1,
+                };
+
+            var state = await StateProvider.GetAuthenticationStateAsync();
+            price = Quota.TotalQuotasAquired * FeaturedAction.QuotaValue;
+            if (state.User.Identity is not null)
+            {
+                var userIdentity = (ClaimsIdentity)state.User.Identity;
+                if (state.User.Identity.IsAuthenticated)
+                {
+                    Quota.Name = state.User.Identity.Name ?? "";
+                    var emails = state.User.Claims.First(c => c.Type.Equals("emails")).Value;
+                    Quota.Email = ExtractEmail(emails);
+
+                    isRoleAdmin = Quota.Email.Equals("hebertalvesds@outlook.com");
+
+                    if(Quota.Email != string.Empty)
+                        Quotas = await _httpClient.GetFromJsonAsync<List<Quota>>($"api/get/quotas/0/100?email={Quota.Email}") ?? Quotas;
+                }
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+    }
+
+    private string ExtractEmail(string values)
+    {
+        Regex emailRegex = new Regex(@"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b",
+            RegexOptions.IgnoreCase);
+        //find items that matches with our pattern
+        MatchCollection emailMatches = emailRegex.Matches(values);
+
+        return emailMatches.FirstOrDefault() is not null ? emailMatches.FirstOrDefault().Value : string.Empty;
+    }
+
+    private void AddQuota()
+    {
+        if (Quota.TotalQuotasAquired > 10)
+            Quota.TotalQuotasAquired = 10;
+        else
+            Quota.TotalQuotasAquired++;
+
+        price = Quota.TotalQuotasAquired * FeaturedAction.QuotaValue;
+    }
+
+    private void RemoveQuota()
+    {
+        if (Quota.TotalQuotasAquired < 1)
+            Quota.TotalQuotasAquired = 1;
+        else
+            Quota.TotalQuotasAquired--;
+
+        price = Quota.TotalQuotasAquired * FeaturedAction.QuotaValue;
+    }
+
+    private async Task CopyToClipboard(string id)
+    {
+        await JS.InvokeVoidAsync("copyToClipboard", id);
+    }
+
+    private async Task OpenForm(Quota q)
+    {
+        await JS.InvokeVoidAsync("window.open", $"https://share.hsforms.com/13QPawSBgThOMBjp8YMWidgq56s7?conversao={q.Id}&email={q.Email}&firstname={q.Name}&phone={q.Phone}", "_blank");
+    }
+
+    private async Task SaveQuota()
+    {
+        Quota.BilledAt = DateTime.UtcNow;
+        Quota.TotalBilled = FeaturedAction.QuotaValue * Quota.TotalQuotasAquired;
+
+        var result = await _httpClient.PostAsJsonAsync<Quota>("api/add/quota/", Quota);
+
+        if (result.IsSuccessStatusCode)
+        {
+            Quotas = await _httpClient.GetFromJsonAsync<List<Quota>>($"api/get/quotas/0/100?email={Quota.Email}") ?? Quotas;
+            tabIndex = 1;
+        }
+        else
+        {
+
+        }
+    }
+
+    private async Task GenerateNumbers(Quota quota)
+    {
+        Quota.AtachedAt = DateTime.UtcNow;
+
+        var result = await _httpClient.PostAsJsonAsync<Quota>("api/add/quota/", quota);
+
+
+        if (result.IsSuccessStatusCode && isRoleAdmin)
+        {
+            List<QuotasAquiredEntity> aquiredList = await _httpClient.GetFromJsonAsync<List<QuotasAquiredEntity>>("");
+
+            Quotas = await _httpClient.GetFromJsonAsync<List<Quota>>($"api/get/quotas/0/1000?email={Quota.Email}") ?? Quotas;
+            tabIndex = 2;
+        }
+
+    }
+}
