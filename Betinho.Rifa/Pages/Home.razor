@@ -129,7 +129,14 @@
     double progress = 0.0;
 
     [Parameter]
-    public string conversao { get; set; }
+    public string? conversao { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Console.WriteLine(conversao);
+        if (string.IsNullOrEmpty(conversao))
+            conversao = "falabetinho";
+    }
 
     private async Task CopyToClipboard(string id)
     {
