@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <RootNamespace>cosmos_betinho</RootNamespace>
+    <UserSecretsId>60ac9b5f-498f-4904-94e1-753b874fddb3</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="AutomaticGenNumbers.cs" />
+    <Compile Remove="GetAllQuotasNumbers.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Blazor.SubtleCrypto" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="4.3.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+</Project>
