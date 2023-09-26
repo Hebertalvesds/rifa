@@ -1,9 +1,12 @@
+@page "/"
+@page "/index"
 @page "/{conversao}"
 
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 
 <RadzenStack>
+    <RadzenProgressBar @bind-Value="@progress"></RadzenProgressBar>
     <RadzenRow>
         <RadzenColumn>
             <RadzenCard>
@@ -130,6 +133,8 @@
     int quotas = 1;
 
     int total = 10;
+
+    double progress = 0.0;
 
     [Parameter]
     public string conversao { get; set; }
