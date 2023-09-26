@@ -1,5 +1,4 @@
 @page "/"
-@page "/index"
 @page "/{conversao}"
 
 @inject IJSRuntime JS
@@ -37,7 +36,7 @@
         <RadzenColumn class="rz-col-12 rz-col-md-6">
             <RadzenPanel>
                 <HeaderTemplate>
-            
+
                 </HeaderTemplate>
                 <ChildContent>
                     <RadzenRow class="rz-flex-column" RowGap="1" Style="margin-top: 8px">
@@ -56,7 +55,8 @@
                 <ChildContent>
                     <RadzenRow class="rz-flex-column" RowGap="1" Style="margin-top: 8px">
                         <p>
-                            Para liberar o botão Confirmar e preciso preencher todos os dados!</p>
+                            Para liberar o botão Confirmar e preciso preencher todos os dados!
+                        </p>
                     </RadzenRow>
                 </ChildContent>
                 <FooterTemplate>
@@ -79,36 +79,28 @@
                         <RadzenEmailValidator Text="E-mail inválido" Component="@email"></RadzenEmailValidator>
                     </RadzenColumn>
                 </RadzenRow>
-<RadzenRow>
-    <RadzenColumn>
-        <RadzenText Text="Cotas" />
-        <RadzenNumeric TValue="int" Min="1" Max="10" @bind-Value="quotas" Change="(() => total = quotas * 10)"></RadzenNumeric>
-    </RadzenColumn>
-<RadzenColumn>
-    <RadzenText Text="Preço" />
-    <RadzenNumeric TValue="int" Disabled="true" @bind-Value="@total"></RadzenNumeric>
-</RadzenColumn>
-<RadzenColumn>
-    <RadzenText Text="Liberar Pagamento" TextStyle="Radzen.Blazor.TextStyle.Body1" Style="width: 165px" />
-    <RadzenButton Text="Confirmar" class="form-control" Click=ToComprovante Disabled="(name == string.Empty && email == string.Empty && telefone == string.Empty)"></RadzenButton>
-</RadzenColumn>
-</RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn>
+                        <RadzenText Text="Cotas" />
+                        <RadzenNumeric TValue="int" Min="1" Max="10" @bind-Value="quotas" Change="(() => total = quotas * 10)"></RadzenNumeric>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenText Text="Preço" />
+                        <RadzenNumeric TValue="int" Disabled="true" @bind-Value="@total"></RadzenNumeric>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenText Text="Liberar Pagamento" TextStyle="Radzen.Blazor.TextStyle.Body1" Style="width: 165px" />
+                        <RadzenButton Text="Confirmar" class="form-control" Click=ToComprovante Disabled="(name == string.Empty && email == string.Empty && telefone == string.Empty)"></RadzenButton>
+                    </RadzenColumn>
+                </RadzenRow>
             </RadzenPanel>
-            
+
             <RadzenPanel Visible="(name != string.Empty && email != string.Empty && telefone != string.Empty)">
                 <RadzenColumn class="text-break rz-col-12" Style="padding: 8px; background-color: #e0e0e0; border-radius: .375rem">
                     <input type="text" id="pix-code" value="@pixCode" hidden />
                     <RadzenButton Icon="content_copy" Text="Copiar PIX" Click="@(() => CopyToClipboard("pix-code"))"></RadzenButton>
+                    <RadzenButton Icon="attach_file" Text="Enviar Comprovante" Click="@(() => ToComprovante())"></RadzenButton>
                 </RadzenColumn>
-                <div>
-                    <script>
-                        hbspt.forms.create({
-                            region: "na1",
-                            portalId: "43912087",
-                            formId: "dd03dac1-2060-4e13-8c06-3a7c60c5a276"
-                        });
-                    </script>
-                </div>
             </RadzenPanel>
         </RadzenColumn>
     </RadzenRow>
@@ -121,7 +113,7 @@
 </RadzenStack>
 
 
-@code{
+@code {
     string pixCode = "00020126580014br.gov.bcb.pix013636a82332-5d65-4fac-bc22-5bcab134f29427600016BR.COM.PAGSEGURO013602E3D370-65F4-41A3-9992-6B5F311E9A1E5204000053039865802BR5921HEBERT ALVES DA SILVA6015RIBEIRAO DAS NE62290525PAGS00000000023092523032663042213";
 
     string name = "";
@@ -144,7 +136,9 @@
         await JS.InvokeVoidAsync("copyToClipboard", id);
     }
 
-    private async Task ToComprovante(){
-        Navigation.NavigateTo($"{Navigation.BaseUri}/index?conversao={conversao}&email={email}&firstname={name}&phone={telefone}&total={total}&quotas={quotas}");
+    private async Task ToComprovante()
+    {
+        string uri = $"https://share.hsforms.com/13QPawSBgThOMBjp8YMWidgq56s7?conversao={conversao}&email={email}&firstname={name}&phone={telefone}&total={total}&quotas={quotas}";
+        Navigation.NavigateTo(uri);
     }
 }
