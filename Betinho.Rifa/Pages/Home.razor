@@ -1,0 +1,145 @@
+@page "/{conversao}"
+
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn>
+            <RadzenCard>
+                <RadzenRow class="rz-align-items-center">
+                    <RadzenImage Path="pix.jpeg" Style="width: 120px; height: 120px; border-radius: 8px"></RadzenImage>
+                    <RadzenText Text="R$ 1500,00 (PIX)" TextStyle="Radzen.Blazor.TextStyle.Subtitle2" />
+                </RadzenRow>
+            </RadzenCard>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenCard>
+                <RadzenRow class="rz-align-items-center">
+                    <RadzenImage Path="20230922_173158.jpg" Style="width: 120px; height: 120px; border-radius: 8px"></RadzenImage>
+                    <RadzenText Text="SmartWatch Amazfit Bip 3" TextStyle="Radzen.Blazor.TextStyle.Subtitle2" />
+                </RadzenRow>
+            </RadzenCard>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenCard>
+                <RadzenRow class="rz-align-items-center">
+                    <RadzenImage Path="20230922_173218.jpg" Style="width: 120px; height: 120px; border-radius: 8px"></RadzenImage>
+                    <RadzenText Text="Fone JBL Quantum 50" TextStyle="Radzen.Blazor.TextStyle.Subtitle2" />
+                </RadzenRow>
+            </RadzenCard>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn class="rz-col-12 rz-col-md-6">
+            <RadzenPanel>
+                <HeaderTemplate>
+            
+                </HeaderTemplate>
+                <ChildContent>
+                    <RadzenRow class="rz-flex-column" RowGap="1" Style="margin-top: 8px">
+                        <p>Para comprar quotas do sorteio basta você preencher as informações e enviar o comprovante de pagamento ou você também pode adquirir pelo Chat.</p>
+                        <p>Obs.: Os números só são liberados após o pagamento ser processado e você irá receber no whatsapp ou via mensagem de texto.</p>
+                        <p>O resultado será disponibilizado aqui nesta página e também no Instagram você pode acessar o instagram no botão abaixo  a meta é atingir 80% do número de cotas para a liberação da data do sorteio.</p>
+                        <p>Em caso de dúvida entre em contato conosco pelo chat!</p>
+                        <p>Obs.:O sorteio irá acontecer entre os números que forem gerados. </p>
+                        As informações para pagamento são liberados após clicar em CONFIRMAR. Você vera o botão COPIAR PIX e o campo para anexar o comprovante de pagamento!
+                    </RadzenRow>
+                </ChildContent>
+            </RadzenPanel>
+            <RadzenPanel>
+                <HeaderTemplate>
+                </HeaderTemplate>
+                <ChildContent>
+                    <RadzenRow class="rz-flex-column" RowGap="1" Style="margin-top: 8px">
+                        <p>
+                            Para liberar o botão Confirmar e preciso preencher todos os dados!</p>
+                    </RadzenRow>
+                </ChildContent>
+                <FooterTemplate>
+                </FooterTemplate>
+            </RadzenPanel>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenPanel>
+                <RadzenRow>
+                    <RadzenColumn>
+                        <RadzenTextBox class="form-control" Placeholder="Seu Nome" @bind-Value="@name" Name="Nome"></RadzenTextBox>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenTextBox class="form-control" Placeholder="Seu telefone" @bind-Value="@telefone" Name="Telefone"></RadzenTextBox>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow Style="margin-top: 8px; margin-bottom: 8px">
+                    <RadzenColumn>
+                        <RadzenTextBox class="form-control" Placeholder="Seu email" @bind-Value="@email" Name="Email"></RadzenTextBox>
+                        <RadzenEmailValidator Text="E-mail inválido" Component="@email"></RadzenEmailValidator>
+                    </RadzenColumn>
+                </RadzenRow>
+<RadzenRow>
+    <RadzenColumn>
+        <RadzenText Text="Cotas" />
+        <RadzenNumeric TValue="int" Min="1" Max="10" @bind-Value="quotas" Change="(() => total = quotas * 10)"></RadzenNumeric>
+    </RadzenColumn>
+<RadzenColumn>
+    <RadzenText Text="Preço" />
+    <RadzenNumeric TValue="int" Disabled="true" @bind-Value="@total"></RadzenNumeric>
+</RadzenColumn>
+<RadzenColumn>
+    <RadzenText Text="Liberar Pagamento" TextStyle="Radzen.Blazor.TextStyle.Body1" Style="width: 165px" />
+    <RadzenButton Text="Confirmar" class="form-control" Click=ToComprovante Disabled="(name == string.Empty && email == string.Empty && telefone == string.Empty)"></RadzenButton>
+</RadzenColumn>
+</RadzenRow>
+            </RadzenPanel>
+            
+            <RadzenPanel Visible="(name != string.Empty && email != string.Empty && telefone != string.Empty)">
+                <RadzenColumn class="text-break rz-col-12" Style="padding: 8px; background-color: #e0e0e0; border-radius: .375rem">
+                    <input type="text" id="pix-code" value="@pixCode" hidden />
+                    <RadzenButton Icon="content_copy" Text="Copiar PIX" Click="@(() => CopyToClipboard("pix-code"))"></RadzenButton>
+                </RadzenColumn>
+                <div>
+                    <script>
+                        hbspt.forms.create({
+                            region: "na1",
+                            portalId: "43912087",
+                            formId: "dd03dac1-2060-4e13-8c06-3a7c60c5a276"
+                        });
+                    </script>
+                </div>
+            </RadzenPanel>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenPanel>
+        <RadzenColumn>
+            <RadzenButton Click=@(() => JS.InvokeVoidAsync("window.open","https://wa.me/5531983140945?text=Sorteio%20Fala%20Betinho","_blank")) Style="background-color: #00A400; float: none; width: 120px; margin: 8px" Text="Whatsapp"></RadzenButton>
+            <RadzenButton Click=@(() => JS.InvokeVoidAsync("window.open","https://instagram.com/falabetinho","_blank")) Style="float: none; width: 120px; margin: 8px; background-color: rgb(225, 48, 108)" Text="Instagram"></RadzenButton>
+        </RadzenColumn>
+    </RadzenPanel>
+</RadzenStack>
+
+
+@code{
+    string pixCode = "00020126580014br.gov.bcb.pix013636a82332-5d65-4fac-bc22-5bcab134f29427600016BR.COM.PAGSEGURO013602E3D370-65F4-41A3-9992-6B5F311E9A1E5204000053039865802BR5921HEBERT ALVES DA SILVA6015RIBEIRAO DAS NE62290525PAGS00000000023092523032663042213";
+
+    string name = "";
+
+    string email = "";
+
+    string telefone = "";
+
+    int quotas = 1;
+
+    int total = 10;
+
+    [Parameter]
+    public string conversao { get; set; }
+
+    private async Task CopyToClipboard(string id)
+    {
+        await JS.InvokeVoidAsync("copyToClipboard", id);
+    }
+
+    private async Task ToComprovante(){
+        Navigation.NavigateTo($"{Navigation.BaseUri}/index?conversao={conversao}&email={email}&firstname={name}&phone={telefone}&total={total}&quotas={quotas}");
+    }
+}
