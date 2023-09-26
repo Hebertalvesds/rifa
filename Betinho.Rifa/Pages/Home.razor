@@ -1,5 +1,4 @@
 @page "/"
-@page "/{conversao}"
 
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
@@ -130,14 +129,23 @@
 
     bool showPayment = false;
 
-    [Parameter]
     public string? conversao { get; set; }
 
     protected override void OnInitialized()
     {
-        Console.WriteLine(conversao);
+        conversao = GetQueryParm("conversao");
+
         if (string.IsNullOrEmpty(conversao))
             conversao = "falabetinho";
+
+        Console.WriteLine(conversao);
+    }
+
+    string GetQueryParm(string parmName)
+    {
+        var uriBuilder = new UriBuilder(Navigation.Uri);
+        var q = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+        return q[parmName] ?? "";
     }
 
     private async Task CopyToClipboard(string id)
