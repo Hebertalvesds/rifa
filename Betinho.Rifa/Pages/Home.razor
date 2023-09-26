@@ -90,12 +90,12 @@
                     </RadzenColumn>
                     <RadzenColumn>
                         <RadzenText Text="Liberar Pagamento" TextStyle="Radzen.Blazor.TextStyle.Body1" Style="width: 165px" />
-                        <RadzenButton Text="Confirmar" class="form-control" Click=ToComprovante Disabled="(name == string.Empty && email == string.Empty && telefone == string.Empty)"></RadzenButton>
+                        <RadzenButton Text="Confirmar" class="form-control" Click="(() => showPayment = true)" Disabled="(name == string.Empty && email == string.Empty && telefone == string.Empty)"></RadzenButton>
                     </RadzenColumn>
                 </RadzenRow>
             </RadzenPanel>
 
-            <RadzenPanel Visible="(name != string.Empty && email != string.Empty && telefone != string.Empty)">
+            <RadzenPanel Visible="showPayment">
                 <RadzenColumn class="text-break rz-col-12" Style="padding: 8px; background-color: #e0e0e0; border-radius: .375rem">
                     <input type="text" id="pix-code" value="@pixCode" hidden />
                     <RadzenButton Icon="content_copy" Text="Copiar PIX" Click="@(() => CopyToClipboard("pix-code"))"></RadzenButton>
@@ -127,6 +127,8 @@
     int total = 10;
 
     double progress = 0.0;
+
+    bool showPayment = false;
 
     [Parameter]
     public string? conversao { get; set; }
