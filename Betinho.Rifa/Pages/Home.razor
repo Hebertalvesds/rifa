@@ -4,7 +4,7 @@
 @inject NavigationManager Navigation
 
 <RadzenStack>
-    <RadzenProgressBar @bind-Value="@progress" Min="1" Max="100"></RadzenProgressBar>
+    <RadzenProgressBar @bind-Value="@progress" Min="1" Max="100" ProgressBarStyle="Radzen.ProgressBarStyle.Primary"></RadzenProgressBar>
     <RadzenRow>
         <RadzenColumn>
             <RadzenCard>
@@ -125,7 +125,7 @@
 
     int total = 10;
 
-    double vendido = 6.0;
+    double vendido = 7.0;
 
     double progress;
 
