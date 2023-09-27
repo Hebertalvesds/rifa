@@ -4,7 +4,7 @@
 @inject NavigationManager Navigation
 
 <RadzenStack>
-    <RadzenProgressBar @bind-Value="@progress"></RadzenProgressBar>
+    <RadzenProgressBar @bind-Value="@progress" Min="1" Max="100"></RadzenProgressBar>
     <RadzenRow>
         <RadzenColumn>
             <RadzenCard>
@@ -125,7 +125,9 @@
 
     int total = 10;
 
-    double progress = (1*100/1000);
+    double vendido = 1.0;
+
+    double progress;
 
     bool showPayment = false;
 
@@ -133,6 +135,8 @@
 
     protected override void OnInitialized()
     {
+        progress = (vendido * 100)/1000;
+        Console.WriteLine(progress);
         conversao = GetQueryParm("conversao");
 
         if (string.IsNullOrEmpty(conversao))
